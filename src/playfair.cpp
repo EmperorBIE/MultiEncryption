@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <iostream>
 #include <iterator>
+#include <qDebug>
 
 using namespace std;
 
@@ -35,6 +36,8 @@ void Playfair::setKeyword(const std::string& keyword)
     set<char> alphaSet;
     size_t i = 0, j = 0;
 
+    alphaPosMap.clear();
+
     // firstly insert keyword to alpha matrix
     for(string::const_iterator keyIter = keyword.begin();
             keyIter != keyword.end(); keyIter++) {
@@ -61,6 +64,8 @@ void Playfair::setKeyword(const std::string& keyword)
         alphaMatrix[RANK][k] = alphaMatrix[0][k];
     for(size_t k = 0; k < RANK; k++)
         alphaMatrix[k][RANK] = alphaMatrix[k][0];
+
+    alphaMatrix[RANK][RANK] = ' ';
 }
 
 
@@ -70,6 +75,8 @@ const std::pair<size_t, size_t> Playfair::getRowAndCol(char ch) const
             mapIter = alphaPosMap.find(ch);
     if(mapIter == alphaPosMap.end())
         return make_pair(RANK, RANK);
+    qDebug() << ch << '[' << mapIter->second.first
+             << ',' << mapIter->second.second << ']';
     return mapIter->second;
 }
 
@@ -89,24 +96,40 @@ void Playfair::doEncrypt(char& ch1, char& ch2) const
     }
 }
 
+void Playfair::doDecrypt(char& ch1, char& ch2) const
+{
+    const pair<size_t, size_t> pair1 = getRowAndCol(ch1),
+                         pair2 = getRowAndCol(ch2);
+    if(pair1.first == pair2.first) {// ch1 & ch2 in the same row
+        ch1 = alphaMatrix[pair1.first][pair1.second - 1];
+        ch2 = alphaMatrix[pair2.first][pair2.second - 1];
+    }else if(pair1.second == pair2.second) {// in the same col
+        ch1 = alphaMatrix[pair1.first - 1][pair1.second];
+        ch2 = alphaMatrix[pair2.first - 1][pair2.second];
+    }else { // not in the same row or col
+        ch1 = alphaMatrix[pair1.first][pair2.second];
+        ch2 = alphaMatrix[pair2.first][pair1.second];
+    }
+}
+
 const std::string Playfair::encrypt(
                 const std::string& plainText) const
 {
-    if(plainText.size() == 0)
-        return "";
+    if(plainText.size() == 0) return "";
+
     string cipherText;
     cipherText.reserve(plainText.size() * 2);
 
-    string::iterator cIter = cipherText.begin();
     string::const_iterator pIter = plainText.begin();
+    auto cipherBIter = back_inserter(cipherText);
+
     while(pIter != plainText.end()) {
         char ch1 = toupper(*pIter);
         char ch2 = (ch1 == 'K') ? 'Z' : 'K';
 
         // skip nonalpha char
         if(!isalpha(ch1)) {
-            cIter = cipherText.insert(cIter, ch1);
-            cIter++;
+            *cipherBIter++ = ch1;
             pIter++;
             continue;
         }
@@ -130,7 +153,6 @@ const std::string Playfair::encrypt(
                         pIter++;
                     }
                 }
-
                 hasInnerSymbol = true;
             }else if(*pIter != *(pIter+1)) {// both are unique alpha
                 ch2 = toupper(*(pIter+1));
@@ -141,27 +163,19 @@ const std::string Playfair::encrypt(
         }else {
             pIter++;
         }
+        // actually encryption work in here
+        doEncrypt(ch1, ch2);
 
-        doEncrypt(ch1, ch2); // actually encryption work in here
-
-        cIter = cipherText.insert(cIter, ch1);
-        cIter++;
-
+        *cipherBIter++ = ch1;
         // we append those symbols back
         if(hasInnerSymbol) {
             for(string::const_iterator sIter = symbols.begin();
                 sIter != symbols.end(); sIter++) {
-                cIter = cipherText.insert(cIter, *sIter);
-                cIter++;
+                *cipherBIter++ = *sIter;
             }
         }
-
-        cIter = cipherText.insert(cIter, ch2);
-        cIter++;
+        *cipherBIter++ = ch2;
     }
-
-    cipherText.erase(cIter, cipherText.end());
-
     return cipherText;
 }
 

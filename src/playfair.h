@@ -35,8 +35,11 @@ private:
 
     bool fillMatrixAndIsFull(char ch, std::size_t& row,
                                       std::size_t& col);
-    const std::pair<size_t, size_t> getRowAndCol(char ch) const;
+    const std::pair<std::size_t, std::size_t> getRowAndCol(
+                         char ch) const;
+
     void doEncrypt(char& ch1, char& ch2) const;
+    void doDecrypt(char& ch1, char& ch2) const;
 };
 
 #endif // PLAYFAIR_H

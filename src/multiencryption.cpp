@@ -49,8 +49,6 @@ MultiEncryption::MultiEncryption(QWidget *parent) :
     plainTextEdit = new QTextEdit(this);
     cipherTextEdit = new QTextEdit(this);
 
-    cipherTextEdit->setReadOnly(true);
-
     QLabel *keyLbl = new QLabel("Key:", this);
     keyLbl->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     QLabel *plainLbl = new QLabel("Plain text:", this);
@@ -180,6 +178,11 @@ void MultiEncryption::onButtonClickEncrypt()
     qDebug() << "Cipher text: " + cipherText;
 
     cipherTextEdit->setText(cipherText);
+
+    Playfair *pf = dynamic_cast<Playfair*>(encryptor);
+    if(pf) {
+        dispLabel->setText(pf->toString().c_str());
+    }
 }
 
 void MultiEncryption::onButtonClickDecrypt()
