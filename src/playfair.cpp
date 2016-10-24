@@ -71,6 +71,8 @@ void Playfair::setKeyword(const std::string& keyword)
 
 const std::pair<size_t, size_t> Playfair::getRowAndCol(char ch) const
 {
+    if('J' == ch) ch = 'I';
+
     map<char, pair<size_t, size_t> >::const_iterator
             mapIter = alphaPosMap.find(ch);
     if(mapIter == alphaPosMap.end())
@@ -101,11 +103,11 @@ void Playfair::doDecrypt(char& ch1, char& ch2) const
     const pair<size_t, size_t> pair1 = getRowAndCol(ch1),
                          pair2 = getRowAndCol(ch2);
     if(pair1.first == pair2.first) {// ch1 & ch2 in the same row
-        ch1 = alphaMatrix[pair1.first][pair1.second - 1];
-        ch2 = alphaMatrix[pair2.first][pair2.second - 1];
+        ch1 = alphaMatrix[pair1.first][(RANK+pair1.second-1)%RANK];
+        ch2 = alphaMatrix[pair2.first][(RANK+pair2.second-1)%RANK];
     }else if(pair1.second == pair2.second) {// in the same col
-        ch1 = alphaMatrix[pair1.first - 1][pair1.second];
-        ch2 = alphaMatrix[pair2.first - 1][pair2.second];
+        ch1 = alphaMatrix[(RANK+pair1.first-1)%RANK][pair1.second];
+        ch2 = alphaMatrix[(RANK+pair2.first-1)%RANK][pair2.second];
     }else { // not in the same row or col
         ch1 = alphaMatrix[pair1.first][pair2.second];
         ch2 = alphaMatrix[pair2.first][pair1.second];
@@ -115,7 +117,7 @@ void Playfair::doDecrypt(char& ch1, char& ch2) const
 const std::string Playfair::encrypt(
                 const std::string& plainText) const
 {
-    if(plainText.size() == 0) return "";
+    if(plainText.empty()) return "";
 
     string cipherText;
     cipherText.reserve(plainText.size() * 2);
@@ -135,6 +137,8 @@ const std::string Playfair::encrypt(
         }
 
         string symbols;
+        symbols.reserve(5);
+
         bool hasInnerSymbol = false;
 
         if((pIter+1) != plainText.end()) { // has next one
@@ -148,7 +152,7 @@ const std::string Playfair::encrypt(
                 // If finally we get a unique alpha,
                 // replace ch2 with it's upper
                 if(pIter != plainText.end()) {
-                    if(*pIter != ch1) {
+                    if(toupper(*pIter) != ch1) {
                         ch2 = toupper(*pIter);
                         pIter++;
                     }
@@ -169,10 +173,7 @@ const std::string Playfair::encrypt(
         *cipherBIter++ = ch1;
         // we append those symbols back
         if(hasInnerSymbol) {
-            for(string::const_iterator sIter = symbols.begin();
-                sIter != symbols.end(); sIter++) {
-                *cipherBIter++ = *sIter;
-            }
+            copy(symbols.begin(), symbols.end(), cipherBIter);
         }
         *cipherBIter++ = ch2;
     }
@@ -182,7 +183,75 @@ const std::string Playfair::encrypt(
 const std::string Playfair::decrypt(
                 const std::string& cipherText) const
 {
-   return cipherText;
+    if(cipherText.empty()) return "";
+
+    string plainText;
+    plainText.reserve(cipherText.size() * 2);
+
+    string::const_iterator cIter = cipherText.begin();
+    auto plainBIter = back_inserter(plainText);
+
+    while(cIter != cipherText.end()) {
+        char ch1 = toupper(*cIter);
+        char ch2 = ' ';
+
+        // skip nonalpha char
+        if(!isalpha(ch1)) {
+            *plainBIter++ = ch1;
+            cIter++;
+            continue;
+        }
+
+        string symbols;
+        symbols.reserve(5);
+
+        bool hasInnerSymbol = false;
+
+        if((cIter+1) != cipherText.end()) { // has next one
+            if(!isalpha(*(cIter+1))) {// the second one isn't alpha
+                cIter++;
+                while(cIter != cipherText.end() &&
+                        !isalpha(*cIter)) {
+                    symbols += *cIter;
+                    cIter++;
+                }
+                // finally we get a unique alpha
+                if(cIter != cipherText.end()) {
+                    ch2 = toupper(*cIter);
+                    cIter++;
+                }
+                hasInnerSymbol = true;
+            }else {
+                ch2 = toupper(*(cIter+1));
+                cIter += 2;
+            }
+        }else { // it shouldn't goes to here
+            cIter++;
+            qDebug() << "Playfair::decrypt: Error: "
+                "number of alpha in cipher text is not even";
+        }
+        // actually decryption work in here
+        doDecrypt(ch1, ch2);
+
+        *plainBIter++ = ch1;
+        // we append those symbols back
+        if(hasInnerSymbol) {
+            copy(symbols.begin(), symbols.end(), plainBIter);
+        }
+
+        // check whether ch2 is filled character
+
+        if(cIter == cipherText.end()) { // check tail
+            if( (ch1 == 'K' && ch2 == 'Z') ||
+                (ch1 != 'K' && ch2 == 'K') )
+                break; // drop ch2
+            else
+                *plainBIter++ = ch2;
+        }else {
+            *plainBIter++ = ch2;
+        }
+    }
+    return plainText;
 }
 
 std::ostream& operator<<(std::ostream& os,
@@ -197,6 +266,8 @@ std::ostream& operator<<(std::ostream& os,
                 os << ch << "   ";
         }
         os << endl;
+        if(Playfair::RANK-1 == row)
+            os << endl;
     }
     return os;
 }

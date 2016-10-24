@@ -113,7 +113,7 @@ MultiEncryption::MultiEncryption(QWidget *parent) :
     // connect signal to slot
     connect(encryptBtn, SIGNAL(clicked(bool)), this,
                     SLOT(onButtonClickEncrypt()));
-    connect(encryptBtn, SIGNAL(clicked(bool)), this,
+    connect(decryptBtn, SIGNAL(clicked(bool)), this,
                     SLOT(onButtonClickDecrypt()));
     connect(playfairBtn, SIGNAL(clicked(bool)), this,
                     SLOT(onRadioClickFunc()));
@@ -150,15 +150,14 @@ void MultiEncryption::onRadioClickFunc()
     if(sender() == playfairBtn) {
         encryptor = &playfair;
 
+        encryptor->setKeyword(keyLnEdit->text().toStdString());
         dispLabel->setText(playfair.toString().c_str());
     }else if(sender() == hillBtn) {
-        QMessageBox::about(nullptr, "Attention",
-                           "Checked Hill");
+
     }else {
         QMessageBox::about(nullptr, "Attention",
-                           "Unsupported");
+                           "Unsupported functionality!");
     }
-
 }
 
 
@@ -187,5 +186,23 @@ void MultiEncryption::onButtonClickEncrypt()
 
 void MultiEncryption::onButtonClickDecrypt()
 {
+    const QString key = keyLnEdit->text();
+    const QString cipherText = cipherTextEdit->toPlainText();
 
+    qDebug() << "Input Key: " + key;
+    qDebug() << "Input cipher text: " + cipherText;
+
+    encryptor->setKeyword(key.toStdString());
+
+    const QString plainText = encryptor->decrypt(
+                    cipherText.toStdString()).c_str();
+
+    qDebug() << "Plain text: " + plainText;
+
+    plainTextEdit->setText(plainText);
+
+    Playfair *pf = dynamic_cast<Playfair*>(encryptor);
+    if(pf) {
+        dispLabel->setText(pf->toString().c_str());
+    }
 }
