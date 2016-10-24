@@ -14,7 +14,8 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         multiencryption.cpp \
-    playfair.cpp
+    playfair.cpp \
+    hill.cpp
 
 HEADERS  += multiencryption.h \
     playfair.h \

@@ -1,6 +1,5 @@
 #include "multiencryption.h"
 #include "ui_multiencryption.h"
-#include "playfair.h"
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QGridLayout>
@@ -150,10 +149,15 @@ void MultiEncryption::onRadioClickFunc()
     if(sender() == playfairBtn) {
         encryptor = &playfair;
 
+        keyLnEdit->setEnabled(true);
         encryptor->setKeyword(keyLnEdit->text().toStdString());
         dispLabel->setText(playfair.toString().c_str());
     }else if(sender() == hillBtn) {
+        encryptor = &hill;
 
+        keyLnEdit->clear();
+        keyLnEdit->setEnabled(false);
+        dispLabel->setText(hill.toString().c_str());
     }else {
         QMessageBox::about(nullptr, "Attention",
                            "Unsupported functionality!");
@@ -178,10 +182,7 @@ void MultiEncryption::onButtonClickEncrypt()
 
     cipherTextEdit->setText(cipherText);
 
-    Playfair *pf = dynamic_cast<Playfair*>(encryptor);
-    if(pf) {
-        dispLabel->setText(pf->toString().c_str());
-    }
+    dispLabel->setText(encryptor->toString().c_str());
 }
 
 void MultiEncryption::onButtonClickDecrypt()
@@ -201,8 +202,5 @@ void MultiEncryption::onButtonClickDecrypt()
 
     plainTextEdit->setText(plainText);
 
-    Playfair *pf = dynamic_cast<Playfair*>(encryptor);
-    if(pf) {
-        dispLabel->setText(pf->toString().c_str());
-    }
+    dispLabel->setText(encryptor->toString().c_str());
 }

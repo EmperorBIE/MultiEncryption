@@ -5,7 +5,6 @@
 #include <iostream>
 #include <iterator>
 #include <qDebug>
-
 using namespace std;
 
 Playfair::Playfair(const std::string& keyword)

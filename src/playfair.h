@@ -23,7 +23,6 @@ public:
         oss << *this;
         return oss.str();
     }
-    ~Playfair() { }
 
     const std::string encrypt(const std::string&) const;
     const std::string decrypt(const std::string&) const;

@@ -10,9 +10,9 @@
 #include <QTextEdit>
 #include <QPushButton>
 #include <QLabel>
+#include "encryptable.h"
 #include "playfair.h"
 #include "hill.h"
-#include "encryptable.h"
 
 namespace Ui {
 class MultiEncryption;
@@ -47,6 +47,7 @@ private:
 
     Encryptable *encryptor;
     Playfair playfair;
+    Hill hill;
 
 private slots:
     void onRadioClickFunc();

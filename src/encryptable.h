@@ -5,6 +5,7 @@
 
 struct Encryptable {
     virtual void setKeyword(const std::string&) = 0;
+    virtual const std::string toString() const = 0;
     virtual const std::string encrypt(const std::string&) const = 0;
     virtual const std::string decrypt(const std::string&) const = 0;
     virtual ~Encryptable() { }
