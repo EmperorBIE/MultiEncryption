@@ -6,6 +6,7 @@
 #include <iosfwd>
 #include <sstream>
 #include "encryptable.h"
+#include <map>
 
 class Playfair : public Encryptable {
 public:
@@ -29,6 +30,8 @@ public:
 
 private:
     char alphaMatrix[RANK+1][RANK+1];
+    std::map<char, std::pair<std::size_t, std::size_t> >
+            alphaPosMap;
 
     bool fillMatrixAndIsFull(char ch, std::size_t& row,
                                       std::size_t& col);

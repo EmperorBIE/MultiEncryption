@@ -20,6 +20,8 @@ bool Playfair::fillMatrixAndIsFull(char ch, std::size_t& row,
         return false;
 
     alphaMatrix[row][col] = ch;
+    alphaPosMap.insert(make_pair(ch,
+                                 make_pair(row, col)));
     if(++col == RANK) {
         col = 0;
         if(++row == RANK)
@@ -64,13 +66,11 @@ void Playfair::setKeyword(const std::string& keyword)
 
 const std::pair<size_t, size_t> Playfair::getRowAndCol(char ch) const
 {
-    for(size_t row = 0; row != RANK; row++)
-        for(size_t col = 0; col != RANK; col++)
-            if(alphaMatrix[row][col] == ch)
-                return make_pair(row, col);
-
-    // should not run into here
-    return make_pair(RANK, RANK);
+    map<char, pair<size_t, size_t> >::const_iterator
+            mapIter = alphaPosMap.find(ch);
+    if(mapIter == alphaPosMap.end())
+        return make_pair(RANK, RANK);
+    return mapIter->second;
 }
 
 void Playfair::doEncrypt(char& ch1, char& ch2) const
