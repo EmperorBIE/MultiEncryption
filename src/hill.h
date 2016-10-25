@@ -28,6 +28,7 @@ public:
 private:
     std::size_t rank;
     int **keyMatrix;
+    int **inverseKeyMatrix;
 };
 
 #endif // HILL_H
