@@ -3,7 +3,6 @@
 #include <iostream>
 #include <iterator>
 #include <cctype>
-#include <QDebug>
 
 using namespace std;
 
@@ -106,7 +105,6 @@ const std::string Hill::encrypt(
         stringstream ss;
         for(size_t i = 0; i < rank; i++)
             ss << plainAlphaGroup[i] << " ";
-        qDebug() << "Before encrypt: (" << ss.str().c_str() << ')';
 
         // encrypt alpha
         SquareMatrixMulToColumnVector(rank, keyMatrix,

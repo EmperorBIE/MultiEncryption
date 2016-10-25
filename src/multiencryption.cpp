@@ -126,15 +126,6 @@ MultiEncryption::MultiEncryption(QWidget *parent) :
 MultiEncryption::~MultiEncryption()
 {
     delete ui;
-    delete playfairBtn;
-    delete hillBtn;
-
-    delete keyLnEdit;
-    delete plainTextEdit;
-    delete cipherTextEdit;
-
-    delete encryptBtn;
-    delete decryptBtn;
 }
 
 void MultiEncryption::keyPressEvent(QKeyEvent *event)
