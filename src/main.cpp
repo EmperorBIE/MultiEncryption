@@ -8,6 +8,7 @@ int main(int argc, char *argv[])
     MultiEncryption w;
     w.setWindowTitle("MultiEncryption");
     w.resize(685, 425);
+    w.setWindowIcon(QIcon("MultiEncryption.ico"));
     w.show();
 
     return a.exec();
