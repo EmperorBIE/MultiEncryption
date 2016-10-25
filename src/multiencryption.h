@@ -9,6 +9,7 @@
 #include <QLineEdit>
 #include <QTextEdit>
 #include <QPushButton>
+#include <QCheckBox>
 #include <QLabel>
 #include "encryptable.h"
 #include "playfair.h"
@@ -44,6 +45,9 @@ private:
 
     QPushButton *encryptBtn;
     QPushButton *decryptBtn;
+
+    QCheckBox *readFileChkBox;
+    QCheckBox *writeFileChkBox;
 
     Encryptable *encryptor;
     Playfair playfair;
