@@ -1,8 +1,11 @@
 # MultiEncryption
-A Playfair and Hill encryption/decryption tool, based on QT5 in C++, offers Playfair, Hill encryption functionalities.
+================
+A classical encryption tool based on QT 5.7, coded by C++ 11, offers Playfair, Hill encryption functionalities.
 
 ## Platform
 This program was build on Widonws 10, x86 architecture.To run it, click the shortcut named 'MultiEncryption.exe'.
+
+You can rebuild the project using *Qt Creator 4.3* if your system has a different platform.
 
 ## Screenshot
 ### Main window of program
