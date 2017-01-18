@@ -8,9 +8,11 @@
 #include "encryptable.h"
 #include <map>
 
+
 class Playfair : public Encryptable {
 public:
     static const std::size_t RANK = 5;
+
     explicit Playfair(const std::string& keyword = "monarchy");
 
     void setKeyword(const std::string& keyword);

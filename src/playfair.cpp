@@ -6,6 +6,8 @@
 #include <iterator>
 using namespace std;
 
+const std::size_t Playfair::RANK;
+
 Playfair::Playfair(const std::string& keyword)
 {
     setKeyword(keyword);
@@ -36,7 +38,7 @@ void Playfair::setKeyword(const std::string& keyword)
     key.reserve(keyword.size());
     auto keyBInserter = back_inserter(key);
     copy_if(keyword.begin(), keyword.end(), keyBInserter,
-                isalpha);
+                ptr_fun<int, int>(isalpha));
 
     set<char> alphaSet;
     size_t i = 0, j = 0;
