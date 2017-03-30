@@ -1,5 +1,4 @@
 # MultiEncryption
-================
 A classical encryption tool based on QT 5.7, coded by C++ 11, offers Playfair, Hill encryption functionalities.
 
 ## Platform
